@@ -62,6 +62,6 @@ public class CitaController {
         LocalDate fechaObj = LocalDate.parse(fecha);
         List<Cita> citas = citaService.buscarCitasPorFecha(fechaObj);
         model.addAttribute("citas", citas);
-        return "appoiment"; // Nombre de la vista donde se mostrarán las citas
+        return "search"; // Nombre de la vista donde se mostrarán las citas
     }
 }

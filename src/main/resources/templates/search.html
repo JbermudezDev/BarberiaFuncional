@@ -36,37 +36,35 @@
         <h1>Buscar Citas</h1>
         
         <!-- Formulario para ingresar la fecha -->
-        <form action="/consultar" method="get">
-            <label for="fecha">Seleccione la fecha:</label>
-            <input type="date" id="fecha" name="fecha" required>
-            <button type="submit">Consultar</button>
+        <form action="/buscarCitas" method="get">
+            <label for="fechaBusqueda">Fecha:</label>
+            <input type="date" id="fechaBusqueda" name="fecha" required>
+            <input type="submit" value="Buscar">
         </form>
-
-        <br>
-
-        <!-- Tabla para mostrar las citas -->
-        <div>
-            <h2>Citas para el día <span th:text="${fecha}"></span></h2>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Cédula</th>
-                        <th>Nombre</th>
-                        <th>Servicio</th>
-                        <th>Hora</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="cita : ${citas}">
-                        <td th:text="${cita.cedula}"></td>
-                        <td th:text="${cita.nombre}"></td>
-                        <td th:text="${cita.servicio}"></td>
-                        <td th:text="${cita.fecha}"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    
+        <h2>Citas Agendadas</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Cédula</th>
+                    <th>Nombre</th>
+                    <th>Servicio</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cita : ${citas}">
+                    <td th:text="${cita.cedula}"></td>
+                    <td th:text="${cita.nombre}"></td>
+                    <td th:text="${cita.servicio}"></td>
+                    <td th:text="${cita.fecha}"></td>
+                    <td th:text="${cita.hora}"></td>
+                </tr>
+            </tbody>
+        </table>
+    
+        <p th:text="${mensaje}"></p>
 
 </body>
 </html>
