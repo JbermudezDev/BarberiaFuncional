@@ -57,13 +57,11 @@ public class CitaController {
         model.addAttribute("mensaje", mensaje);
         return "appoiment"; // Redirige al formulario de citas
     }
-    @GetMapping("/consultar")
-    public String consultarCitas(@RequestParam String fecha, Model model) {
+    @GetMapping("/buscarCitas")
+    public String buscarCitasPorFecha(@RequestParam String fecha, Model model) {
         LocalDate fechaObj = LocalDate.parse(fecha);
-        List<Cita> citas = citaService.obtenerCitasPorFecha(fechaObj);
-
+        List<Cita> citas = citaService.buscarCitasPorFecha(fechaObj);
         model.addAttribute("citas", citas);
-        model.addAttribute("fecha", fecha);
-        return "search"; // Vista donde se muestra la tabla de citas
+        return "appoiment"; // Nombre de la vista donde se mostrarán las citas
     }
 }

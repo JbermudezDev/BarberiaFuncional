@@ -43,24 +43,28 @@ public class CitaService {
             return "Error al agendar la cita: " + e.getMessage();
         }
     }
-    public List<Cita> obtenerCitasPorFecha(LocalDate fecha) {
+    public List<Cita> buscarCitasPorFecha(LocalDate fecha) {
         List<Cita> citas = new ArrayList<>();
         String fechaCarpeta = fecha.toString();
-        File carpeta = new File(STORAGE_DIR + fechaCarpeta);
+        Path carpetaPath = Paths.get(STORAGE_DIR + fechaCarpeta);
 
-        if (carpeta.exists() && carpeta.isDirectory()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-
-            for (File file : carpeta.listFiles()) {
-                try {
-                    Cita cita = objectMapper.readValue(file, Cita.class);
-                    citas.add(cita);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        if (Files.exists(carpetaPath)) {
+            try {
+                Files.list(carpetaPath).forEach(filePath -> {
+                    try {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        objectMapper.registerModule(new JavaTimeModule());
+                        Cita cita = objectMapper.readValue(filePath.toFile(), Cita.class);
+                        citas.add(cita);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+
         return citas;
     }
 }
