@@ -57,25 +57,13 @@ public class CitaController {
         model.addAttribute("mensaje", mensaje);
         return "appoiment"; // Redirige al formulario de citas
     }
-    @GetMapping("/buscar")
-    public String buscarCitasPorFecha(@RequestParam("fecha") String fecha, Model model) {
-        try {
-            System.out.println("🔎 Fecha recibida del formulario: " + fecha);
+    @GetMapping("/consultar")
+    public String consultarCitas(@RequestParam String fecha, Model model) {
+        LocalDate fechaObj = LocalDate.parse(fecha);
+        List<Cita> citas = citaService.obtenerCitasPorFecha(fechaObj);
 
-            // Convertimos la fecha para que coincida con el formato de la carpeta
-            LocalDate fechaObj = LocalDate.parse(fecha);
-            List<Cita> citas = citaService.buscarCitasPorFecha(fechaObj);
-
-            if (citas.isEmpty()) {
-                model.addAttribute("mensaje", "⚠ No hay citas agendadas para esta fecha.");
-            } else {
-                model.addAttribute("citas", citas);
-            }
-        } catch (Exception e) {
-            model.addAttribute("mensaje", "❌ Error al buscar citas.");
-            e.printStackTrace();
-        }
-
-        return "search";
+        model.addAttribute("citas", citas);
+        model.addAttribute("fecha", fecha);
+        return "search"; // Vista donde se muestra la tabla de citas
     }
 }
