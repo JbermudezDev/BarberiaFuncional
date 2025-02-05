@@ -4,6 +4,10 @@ import com.example.barber.model.Cita;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import ch.qos.logback.classic.Logger;
+
+import org.apache.el.stream.Stream;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -43,26 +47,35 @@ public class CitaService {
             return "Error al agendar la cita: " + e.getMessage();
         }
     }
+
+      private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(CitaService.class);
     public List<Cita> buscarCitasPorFecha(LocalDate fecha) {
         List<Cita> citas = new ArrayList<>();
         String fechaCarpeta = fecha.toString();
-        Path carpetaPath = Paths.get(STORAGE_DIR + fechaCarpeta);
+        Path carpetaPath = Paths.get(STORAGE_DIR, fechaCarpeta);
 
-        if (Files.exists(carpetaPath)) {
-            try {
-                Files.list(carpetaPath).forEach(filePath -> {
+        LOGGER.info("Buscando citas en la carpeta: {}", carpetaPath);
+
+        if (Files.exists(carpetaPath) && Files.isDirectory(carpetaPath)) {
+            try (DirectoryStream<Path> archivos = Files.newDirectoryStream(carpetaPath)) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.registerModule(new JavaTimeModule());
+
+                archivos.forEach(filePath -> {
                     try {
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        objectMapper.registerModule(new JavaTimeModule());
-                        Cita cita = objectMapper.readValue(filePath.toFile(), Cita.class);
-                        citas.add(cita);
+                        if (Files.isRegularFile(filePath)) {
+                            Cita cita = objectMapper.readValue(filePath.toFile(), Cita.class);
+                            citas.add(cita);
+                        }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        LOGGER.error("Error al leer archivo: {}", filePath, e);
                     }
                 });
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Error al listar archivos en la carpeta: {}", carpetaPath, e);
             }
+        } else {
+            LOGGER.warn("La carpeta {} no existe o no es un directorio válido", carpetaPath);
         }
 
         return citas;

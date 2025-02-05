@@ -65,3 +65,4 @@ public class CitaController {
         return "search"; // Nombre de la vista donde se mostrarán las citas
     }
 }
+

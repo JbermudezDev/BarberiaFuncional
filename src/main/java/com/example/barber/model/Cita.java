@@ -18,7 +18,8 @@ public class Cita {
         this.fecha = fecha;
         this.hora = hora;
     }
-
+    public Cita() {}
+ 
     public String getCedula() {
         return cedula;
     }
